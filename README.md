@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Barracuda Marketing - Casino Affiliate Network Website
 
 ## Admin Panel Access
@@ -124,3 +125,6 @@ EMAIL_PASS=your-password
 ## License
 
 MIT
+=======
+# Barracuda
+>>>>>>> 6fc53f32cb102fd2309fbfe1e80b72cc67761df7
