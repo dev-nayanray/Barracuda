@@ -15,9 +15,9 @@ import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
  */
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
-    company: '',
+    companyName: '',
     type: '',
     messenger: '',
     username: '',
