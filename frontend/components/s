@@ -1,0 +1,91 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Users, Globe, TrendingUp, DollarSign, Zap, Target } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+const metricsData = [
+  { icon: Users, value: '500+', label: 'Active Partners' },
+  { icon: Globe, value: '50+', label: 'GEOs Covered' },
+  { icon: TrendingUp, value: '200+', label: 'Live Offers' },
+  { icon: DollarSign, value: '$5M+', label: 'Monthly Payouts' },
+  { icon: Zap, value: '99.9%', label: 'Uptime' },
+  { icon: Target, value: '48h', label: 'Fast Payouts' },
+];
+
+function Counter(props) {
+  const [count, setCount] = useState(0);
+
+  useEffect(function() {
+    var numValue = parseInt(props.value.replace(/\D/g, ''));
+    var suffix = props.value.replace(/[0-9]/g, '');
+    var current = 0;
+    var increment = numValue / 60;
+
+    var timer = setInterval(function() {
+      current = current + increment;
+      if (current >= numValue) {
+        setCount(numValue);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, 50);
+
+    return function() { clearInterval(timer); };
+  }, [props.value]);
+
+  return React.createElement('span', null, count, suffix);
+}
+
+function MetricCard(props) {
+  var metric = props.metric;
+  var Icon = metric.icon;
+  var index = props.index;
+
+  return React.createElement(motion.div, {
+    key: index,
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.5, delay: index * 0.1 },
+    className: 'card text-center group hover:border-primary-500/30'
+  },
+    React.createElement('div', { className: 'mb-4' },
+      React.createElement(Icon, { className: 'w-10 h-10 mx-auto text-primary-500 group-hover:scale-110 transition-transform duration-300' })
+    ),
+    React.createElement('div', { className: 'text-3xl font-bold text-text mb-2' },
+      React.createElement(Counter, { value: metric.value })
+    ),
+    React.createElement('div', { className: 'text-sm text-text-muted' }, metric.label)
+  );
+}
+
+export default function Metrics() {
+  var metricCards = metricsData.map(function(metric, index) {
+    return React.createElement(MetricCard, { key: index, metric: metric, index: index });
+  });
+
+  return React.createElement('section', {
+    className: 'section bg-surface-100/50',
+    id: 'metrics'
+  },
+    React.createElement('div', { className: 'container-custom' },
+      React.createElement(motion.div, {
+        className: 'text-center mb-16',
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true },
+        transition: { duration: 0.6 }
+      },
+        React.createElement('h2', { className: 'section-title mb-4' }, 'Our Performance'),
+        React.createElement('p', { className: 'section-subtitle' },
+          'Industry-leading metrics that demonstrate our commitment to partner success'
+        )
+      ),
+      React.createElement('div', { className: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4' },
+        metricCards
+      )
+    )
+  );
+}
