@@ -155,7 +155,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="mt-8 text-center text-sm text-text-muted">
-            Default credentials: admin@affiiate.com / admin123
+             
           </p>
         </div>
       </div>

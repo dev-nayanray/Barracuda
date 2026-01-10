@@ -13,7 +13,7 @@ const teamMembers = [
     messenger: 'telegram',
     username: '@alexandra_barracuda',
     email: 'alexandra@barracuda.com',
-    bio: '10+ years in iGaming affiliate management.',
+    bio: '10+ years in iGaming Barracuda management.',
   },
   {
     name: 'Marcus Johnson',

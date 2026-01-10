@@ -71,7 +71,7 @@ const Footer = () => {
                 React.createElement('span', { className: 'text-2xl font-display font-bold gradient-text' }, 'Barracuda')
               ),
               React.createElement('p', { className: 'text-text-muted mb-6' },
-                'The leading casino affiliate network connecting publishers with premium iGaming brands worldwide.'
+                'The leading casino Barracuda network connecting publishers with premium iGaming brands worldwide.'
               ),
               React.createElement('div', { className: 'flex flex-wrap gap-4 mb-6' },
                 React.createElement('div', { className: 'flex items-center gap-2 text-xs text-text-muted' },
