@@ -11,8 +11,8 @@ const teamMembers = [
     position: 'Head of Partner Relations',
     color: 'from-purple-500 to-purple-700',
     messenger: 'telegram',
-    username: '@alexandra_affiiate',
-    email: 'alexandra@affiiate.com',
+    username: '@alexandra_barracuda',
+    email: 'alexandra@barracuda.com',
     bio: '10+ years in iGaming affiliate management.',
   },
   {
@@ -21,7 +21,7 @@ const teamMembers = [
     color: 'from-primary-500 to-primary-700',
     messenger: 'whatsapp',
     username: '+1234567890',
-    email: 'marcus@affiiate.com',
+    email: 'marcus@barracuda.com',
     bio: 'Specializes in scaling advertiser campaigns.',
   },
   {
@@ -29,8 +29,8 @@ const teamMembers = [
     position: 'Account Manager - LATAM',
     color: 'from-green-500 to-green-700',
     messenger: 'telegram',
-    username: '@elena_affiiate',
-    email: 'elena@affiiate.com',
+    username: '@elena_barracuda',
+    email: 'elena@Barracuda.com',
     bio: 'Bilingual support for Spanish/Portuguese.',
   },
   {
@@ -38,8 +38,8 @@ const teamMembers = [
     position: 'Account Manager - APAC',
     color: 'from-red-500 to-red-700',
     messenger: 'wechat',
-    username: 'david_affiiate',
-    email: 'david@affiiate.com',
+    username: 'david_barracuda',
+    email: 'david@barracuda.com',
     bio: 'Expert in Asian markets.',
   },
 ];
@@ -151,21 +151,21 @@ function Team() {
         React.createElement('p', { className: 'text-text-muted mb-6' }, 'Send us a general inquiry.'),
         React.createElement('div', { className: 'flex flex-col sm:flex-row items-center justify-center gap-4' },
           React.createElement('a', {
-            href: 'mailto:partners@affiiate.com',
+            href: 'mailto:partners@barracuda.com',
             className: 'flex items-center gap-2 text-primary-500 hover:text-primary-400 transition-colors'
           },
             React.createElement(Mail, { className: 'w-5 h-5' }),
-            React.createElement('span', null, 'partners@affiiate.com')
+            React.createElement('span', null, 'partners@barracuda.com')
           ),
           React.createElement('span', { className: 'hidden sm:block text-text-muted' }, '|'),
           React.createElement('a', {
-            href: 'https://t.me/affiiate_support',
+            href: 'https://t.me/barracuda_support',
             target: '_blank',
             rel: 'noopener noreferrer',
             className: 'flex items-center gap-2 text-primary-500 hover:text-primary-400 transition-colors'
           },
             React.createElement(Send, { className: 'w-5 h-5' }),
-            React.createElement('span', null, '@affiiate_support')
+            React.createElement('span', null, '@barracuda_support')
           )
         )
       )

@@ -88,7 +88,7 @@ export default function Hero() {
             variants={fadeInUp}
             className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl mx-auto"
           >
-            Join Affiiate, the leading casino affiliate network. Access premium offers,
+            Join Barracuda, the leading casino affiliate network. Access premium offers,
             competitive CPA and revenue share deals, and dedicated support across 50+ GEOs.
           </motion.p>
 

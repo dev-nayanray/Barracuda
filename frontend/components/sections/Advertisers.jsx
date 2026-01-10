@@ -143,7 +143,7 @@ const Advertisers = () => {
               Ready to Scale Your Brand?
             </h3>
             <p className="text-text-muted mb-8 max-w-2xl mx-auto">
-              Join leading casino brands who trust Affiiate for their player acquisition. Get access to quality traffic and dedicated support.
+              Join leading casino brands who trust Barracuda for their player acquisition. Get access to quality traffic and dedicated support.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">

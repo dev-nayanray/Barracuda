@@ -53,7 +53,7 @@ export default function Sidebar({ collapsed, onToggle }) {
           </div>
           {!collapsed && (
             <span className="font-display font-bold text-xl text-text">
-              Affiiate
+              Barracuda
             </span>
           )}
         </Link>

@@ -25,7 +25,7 @@ const Partners = () => {
 
   const testimonials = [
     {
-      quote: "Affiiate has been our top-performing network for 2 years running. Their conversion rates are unmatched in the industry.",
+      quote: "Barracuda has been our top-performing network for 2 years running. Their conversion rates are unmatched in the industry.",
       author: "Alex M.",
       company: "TrafficKing Media",
       rating: 5,
@@ -37,7 +37,7 @@ const Partners = () => {
       rating: 5,
     },
     {
-      quote: "Fast payments, great offers, and excellent communication. Affiiate is our go-to network for casino traffic.",
+      quote: "Fast payments, great offers, and excellent communication. Barracuda is our go-to network for casino traffic.",
       author: "Mike R.",
       company: "Casino Leads Co.",
       rating: 5,

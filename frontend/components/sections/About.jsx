@@ -74,10 +74,10 @@ const About = () => {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <h2 className="section-title mb-4">
-            About Affiiate
+            About Barracuda
           </h2>
           <p className="section-subtitle">
-            We are the leading casino affiliate network connecting publishers with premium iGaming brands worldwide. Our mission is to maximize your earnings through premium offers and dedicated support.
+            We are the leading casino Barracuda network connecting publishers with premium iGaming brands worldwide. Our mission is to maximize your earnings through premium offers and dedicated support.
           </p>
         </motion.div>
 

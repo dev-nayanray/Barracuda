@@ -48,7 +48,7 @@ const Footer = () => {
 
   const contactInfo = {
     email: 'partners@barracuda.marketing',
-    telegram: '@affiiate_support',
+    telegram: '@barracuda_support',
     hours: '24/7 Support',
   };
 
@@ -162,7 +162,7 @@ const Footer = () => {
         ),
         React.createElement('div', { className: 'py-6 border-t border-surface-200' },
           React.createElement('div', { className: 'flex flex-col md:flex-row items-center justify-between gap-4' },
-            React.createElement('p', { className: 'text-sm text-text-muted' }, currentYear + ' Affiiate. All rights reserved.'),
+            React.createElement('p', { className: 'text-sm text-text-muted' }, currentYear + ' Barracuda. All rights reserved.'),
             React.createElement('div', { className: 'flex flex-wrap items-center justify-center gap-6' },
               footerLinks.legal.map(function(link) {
                 return React.createElement(Link, { key: link.label, href: link.href, className: 'text-sm text-text-muted hover:text-primary-500 transition-colors' }, link.label);

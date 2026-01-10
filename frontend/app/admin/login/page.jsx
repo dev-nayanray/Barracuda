@@ -69,7 +69,7 @@ export default function LoginPage() {
               <Building2 className="w-7 h-7 text-black" />
             </div>
             <div>
-              <h1 className="font-display font-bold text-2xl text-text">Affiiate</h1>
+              <h1 className="font-display font-bold text-2xl text-text">Barracuda</h1>
               <p className="text-sm text-text-muted">Admin Panel</p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@affiiate.com"
+                  placeholder="admin@barracuda.com"
                   className="w-full bg-surface-200 border border-surface-300 rounded-xl py-3 pl-12 pr-4 text-text placeholder-text-muted focus:outline-none focus:border-primary-500 transition-colors"
                 />
               </div>
@@ -167,10 +167,10 @@ export default function LoginPage() {
             <Building2 className="w-16 h-16 text-primary-500" />
           </div>
           <h3 className="text-2xl font-bold text-text mb-4">
-            Affiiate Admin Panel
+            Barracuda Admin Panel
           </h3>
           <p className="text-text-muted">
-            Manage your affiliate network, track contacts, and monitor performance all in one place.
+            Manage your Barracuda network, track contacts, and monitor performance all in one place.
           </p>
         </div>
       </div>

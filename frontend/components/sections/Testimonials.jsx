@@ -54,7 +54,7 @@ const Testimonials = () => {
       id: 4,
       quote: "We've worked with many networks, but Affiiate stands out for their transparency and real-time reporting. The API integration makes our workflow seamless and efficient.",
       author: "Elena Vasquez",
-      position: "Head of Affiliates",
+      position: "Head of Barracuda",
       company: "PlayTime Entertainment",
       rating: 5,
       geo: "LatAm",
@@ -130,7 +130,7 @@ const Testimonials = () => {
             What Our Partners Say
           </motion.h2>
           <motion.p variants={staggerItem} className="section-subtitle">
-            Success stories from affiliates who have scaled their business with Affiiate
+            Success stories from Barracuda who have scaled their business with Affiiate
           </motion.p>
         </motion.div>
 
