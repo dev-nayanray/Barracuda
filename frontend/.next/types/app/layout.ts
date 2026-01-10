@@ -1,4 +1,4 @@
-// File: C:\Users\USER\Desktop\Affiiate\frontend\app\layout.js
+// File: C:\Users\USER\Desktop\Barracuda\frontend\app\layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
