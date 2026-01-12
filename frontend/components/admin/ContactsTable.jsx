@@ -140,7 +140,7 @@ export default function ContactsTable({
             <tbody className="divide-y divide-surface-300">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center gap-3 text-text-muted">
                       <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                       Loading contacts...
@@ -149,7 +149,7 @@ export default function ContactsTable({
                 </tr>
               ) : filteredContacts.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-text-muted">
+                  <td colSpan="8" className="px-6 py-12 text-center text-text-muted">
                     No contacts found
                   </td>
                 </tr>
@@ -187,6 +187,37 @@ export default function ContactsTable({
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={contact.status || 'new'} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {contact.blitzPosted ? (
+                          <CheckCircle className="w-4 h-4 text-accent-green" />
+                        ) : contact.blitzError ? (
+                          <XCircle className="w-4 h-4 text-accent-red" />
+                        ) : (
+                          <Clock className="w-4 h-4 text-text-muted" />
+                        )}
+                        <span className={`text-xs ${
+                          contact.blitzPosted ? 'text-accent-green' :
+                          contact.blitzError ? 'text-accent-red' : 'text-text-muted'
+                        }`}>
+                          {contact.blitzPosted ? 'Posted' : contact.blitzError ? 'Error' : 'Pending'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {contact.ftd ? (
+                          <CheckCircle className="w-4 h-4 text-accent-green" />
+                        ) : (
+                          <Clock className="w-4 h-4 text-text-muted" />
+                        )}
+                        <span className={`text-xs ${
+                          contact.ftd ? 'text-accent-green' : 'text-text-muted'
+                        }`}>
+                          {contact.ftd ? 'Yes' : 'No'}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-text-muted text-sm">
                       {new Date(contact.createdAt).toLocaleDateString()}

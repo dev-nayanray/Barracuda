@@ -109,5 +109,64 @@ router.get('/:id', (req, res) => {
   });
 });
 
+/**
+ * Generate a random password meeting Blitz requirements
+ * @returns {string} Random password (6-12 chars, 1 uppercase, 1 lowercase, 1 numeric)
+ */
+function generateRandomPassword() {
+  const length = Math.floor(Math.random() * 7) + 6; // 6-12 characters
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+
+  let password = '';
+  password += uppercase[Math.floor(Math.random() * uppercase.length)];
+  password += lowercase[Math.floor(Math.random() * lowercase.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+
+  const allChars = uppercase + lowercase + numbers;
+  for (let i = 3; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // Shuffle the password
+  return password.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+/**
+ * Check FTD (First Time Deposit) for a lead
+ * @param {string} email - Lead email to check
+ */
+async function checkFTD(email) {
+  try {
+    const ftdParams = new URLSearchParams({
+      token: BLITZ_TOKEN,
+      from: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Last 24 hours
+      to: new Date().toISOString().split('T')[0],
+      filter: 'ftd',
+      limit: '200'
+    });
+
+    const ftdResponse = await axios.get(`${BLITZ_API_BASE}/affiliate_deposits/?${ftdParams}`);
+
+    if (ftdResponse.data && Array.isArray(ftdResponse.data)) {
+      const ftdFound = ftdResponse.data.some(deposit => deposit.email === email);
+      if (ftdFound) {
+        console.log('🎉 FTD detected for email:', email);
+
+        // Update contact record with FTD status
+        const contact = store.contacts.find(c => c.email === email);
+        if (contact) {
+          contact.ftd = true;
+          contact.ftdDate = new Date().toISOString();
+          console.log('Updated contact with FTD status:', contact.id);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('FTD Check failed:', error.response?.data || error.message);
+  }
+}
+
 module.exports = router;
 

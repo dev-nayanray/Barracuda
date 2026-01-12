@@ -67,7 +67,13 @@ router.get('/contacts', authenticateToken, (req, res) => {
       advertisers: store.contacts.filter(c => c.type === 'advertiser').length,
       new: store.contacts.filter(c => c.status === 'new').length,
       contacted: store.contacts.filter(c => c.status === 'contacted').length,
-      qualified: store.contacts.filter(c => c.status === 'qualified').length
+      qualified: store.contacts.filter(c => c.status === 'qualified').length,
+      blitzStats: {
+        posted: store.contacts.filter(c => c.blitzPosted).length,
+        errors: store.contacts.filter(c => c.blitzError).length,
+        ftd: store.contacts.filter(c => c.ftd).length,
+        pending: store.contacts.filter(c => !c.blitzPosted && !c.blitzError).length
+      }
     };
 
     res.json({
@@ -155,13 +161,13 @@ router.get('/contacts/:id', authenticateToken, (req, res) => {
 
 /**
  * @route   PUT /api/admin/contacts/:id
- * @desc    Update contact status and notes
+ * @desc    Update contact status, notes, and Blitz data
  * @access  Private
  */
 router.put('/contacts/:id', authenticateToken, (req, res) => {
   try {
     const contact = store.contacts.find(c => c.id === parseInt(req.params.id));
-    
+
     if (!contact) {
       return res.status(404).json({
         success: false,
@@ -169,12 +175,19 @@ router.put('/contacts/:id', authenticateToken, (req, res) => {
       });
     }
 
-    const { status, notes, assignedTo } = req.body;
+    const { status, notes, assignedTo, blitzPosted, blitzError, ftd, ftdDate } = req.body;
 
     // Update fields
     if (status) contact.status = status;
-    if (notes) contact.notes = notes;
-    if (assignedTo) contact.assignedTo = assignedTo;
+    if (notes !== undefined) contact.notes = notes;
+    if (assignedTo !== undefined) contact.assignedTo = assignedTo;
+
+    // Update Blitz API fields
+    if (blitzPosted !== undefined) contact.blitzPosted = blitzPosted;
+    if (blitzError !== undefined) contact.blitzError = blitzError;
+    if (ftd !== undefined) contact.ftd = ftd;
+    if (ftdDate !== undefined) contact.ftdDate = ftdDate;
+
     contact.updatedAt = new Date().toISOString();
 
     res.json({
