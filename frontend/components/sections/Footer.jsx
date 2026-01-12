@@ -88,16 +88,16 @@ const Footer = () => {
                 )
               ),
               React.createElement('div', { className: 'flex items-center gap-4' },
-                React.createElement('a', { href: '#', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
+                React.createElement('a', { href: 'https://t.me/' + contactInfo.telegram.replace('@', ''), target: '_blank', rel: 'noopener noreferrer', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
                   React.createElement(Send, { className: 'w-5 h-5' })
                 ),
-                React.createElement('a', { href: '#', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
+                React.createElement('a', { href: 'https://twitter.com/barracuda_alex', target: '_blank', rel: 'noopener noreferrer', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
                   React.createElement(Twitter, { className: 'w-5 h-5' })
                 ),
-                React.createElement('a', { href: '#', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
+                React.createElement('a', { href: 'https://linkedin.com/in/barracuda_alex', target: '_blank', rel: 'noopener noreferrer', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
                   React.createElement(Linkedin, { className: 'w-5 h-5' })
                 ),
-                React.createElement('a', { href: '#', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
+                React.createElement('a', { href: 'https://facebook.com/barracuda_alex', target: '_blank', rel: 'noopener noreferrer', className: 'w-10 h-10 bg-surface-200 rounded-xl flex items-center justify-center text-text-muted hover:bg-primary-500 hover:text-background transition-colors' },
                   React.createElement(Facebook, { className: 'w-5 h-5' })
                 )
               )
