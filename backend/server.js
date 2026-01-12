@@ -3,6 +3,9 @@
  * Main server entry point
  */
 
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -10,6 +13,7 @@ const path = require('path');
 
 // Import routes
 const contactRoutes = require('./routes/contact');
+const settingsRoutes = require('./routes/settings');
 const authRoutes = require('./routes/auth');
 const adminContactsRoutes = require('./routes/admin/contacts');
 const adminSettingsRoutes = require('./routes/admin/settings');
@@ -27,6 +31,7 @@ app.use(express.static(path.join(__dirname, '../frontend/out')));
 
 // API Routes
 app.use('/api/contact', contactRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminContactsRoutes);
 app.use('/api/admin', adminSettingsRoutes);

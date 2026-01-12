@@ -38,7 +38,8 @@ router.put('/settings', authenticateToken, (req, res) => {
       'allowNewRegistrations',
       'analytics',
       'notifications',
-      'social'
+      'social',
+      'telegramUsername'
     ];
 
     const updates = {};
@@ -138,7 +139,8 @@ router.post('/settings/reset', authenticateToken, (req, res) => {
         telegram: 'https://t.me/affiiate',
         skype: 'live:affiiate',
         email: 'contact@affiiate.com'
-      }
+      },
+      telegramUsername: 'barracuda_alex'
     };
 
     adminStore.updateSettings(defaultSettings);

@@ -48,7 +48,7 @@ const Footer = () => {
 
   const contactInfo = {
     email: 'partners@barracuda.marketing',
-    telegram: '@barracuda_support',
+    telegram: '@barracuda_alex',
     hours: '24/7 Support',
   };
 

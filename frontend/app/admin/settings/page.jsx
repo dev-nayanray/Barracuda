@@ -48,7 +48,8 @@ export default function SettingsPage() {
       telegram: '',
       skype: '',
       email: ''
-    }
+    },
+    telegramUsername: ''
   });
   
   const [loading, setLoading] = useState(true);
@@ -256,11 +257,18 @@ export default function SettingsPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="Telegram"
+            label="Telegram URL"
             value={settings.social.telegram}
             onChange={(e) => handleChange('social.telegram', e.target.value)}
             placeholder="https://t.me/affiiate"
           />
+          <Input
+            label="Telegram Username"
+            value={settings.telegramUsername}
+            onChange={(e) => handleChange('telegramUsername', e.target.value)}
+            placeholder="barracuda_alex"
+          />
+          <p className="text-xs text-text-muted -mt-3">Username for frontend display (without @)</p>
           <Input
             label="Skype"
             value={settings.social.skype}

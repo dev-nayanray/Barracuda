@@ -4,10 +4,16 @@
  */
 
 const express = require('express');
+const axios = require('axios');
 const router = express.Router();
 
 // Use shared data store
 const store = require('../data/store');
+
+// Blitz API Configuration
+const BLITZ_API_BASE = 'https://blsmapi.net';
+const BLITZ_AFF_ID = '148';
+const BLITZ_TOKEN = 'wuX4oS1IU7m2J48qGuFl';
 
 /**
  * @route   POST /api/contact
@@ -55,15 +61,84 @@ router.post('/', async (req, res) => {
     // Log contact (in production, send email notification)
     console.log('📬 New Contact Submission:', contact);
 
-    // Simulate email sending (replace with actual email service)
-    // await sendEmailNotification(contact);
+    let blitzPosted = false;
+    let blitzError = null;
+
+    try {
+      // Step 1: Verify email with Blitz API
+      console.log('🔍 Verifying email with Blitz API...');
+      const emailVerificationData = new URLSearchParams({
+        email: email.toLowerCase().trim(),
+        first_name: name.split(' ')[0] || name.trim(),
+        last_name: name.split(' ').slice(1).join(' ') || 'Unknown',
+        funnel: 'testfunnel'
+      });
+
+      const emailResponse = await axios.post(`${BLITZ_API_BASE}/emails`, emailVerificationData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      console.log('✅ Email verification successful:', emailResponse.data);
+
+      // Step 2: Post lead to Blitz API
+      console.log('🚀 Posting lead to Blitz API...');
+
+      // Split name into first and last
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || 'Unknown';
+      const lastName = nameParts.slice(1).join(' ') || 'Unknown';
+
+      const leadData = new URLSearchParams({
+        first_name: firstName,
+        last_name: lastName,
+        password: generateRandomPassword(),
+        email: email.toLowerCase().trim(),
+        funnel: 'testfunnel',
+        source: 'https://yourwebsite.com', // Replace with actual source URL
+        aff_sub: 'contact_form',
+        aff_sub2: company.trim(),
+        affid: BLITZ_AFF_ID,
+        area_code: '+1', // Default area code, can be made dynamic
+        phone: '1234567890', // Placeholder phone, can be made optional
+        _ip: req.ip || req.connection.remoteAddress || '127.0.0.1',
+        hitid: `contact_${contact.id}`
+      });
+
+      const leadResponse = await axios.post(`${BLITZ_API_BASE}/leads`, leadData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      console.log('✅ Lead posted successfully:', leadResponse.data);
+      blitzPosted = true;
+
+      // Update contact with Blitz lead info
+      contact.blitzLeadId = leadResponse.data?.lead_id || null;
+      contact.blitzPosted = true;
+
+      // Step 3: Check for FTD (optional, can be scheduled later)
+      // await checkFTD(email.toLowerCase().trim());
+
+    } catch (blitzApiError) {
+      console.error('❌ Blitz API Error:', blitzApiError.response?.data || blitzApiError.message);
+      blitzError = blitzApiError.response?.data?.message || blitzApiError.message;
+
+      // Update contact with error info
+      contact.blitzError = blitzError;
+      contact.blitzPosted = false;
+    }
 
     res.status(201).json({
       success: true,
       message: 'Thank you for your interest! Our team will contact you within 24 hours.',
       data: {
         contactId: contact.id,
-        submittedAt: contact.createdAt
+        submittedAt: contact.createdAt,
+        blitzPosted,
+        blitzError
       }
     });
   } catch (error) {

@@ -15,9 +15,9 @@ import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
  */
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
-    companyName: '',
+    company: '',
     type: '',
     messenger: '',
     username: '',
@@ -27,6 +27,7 @@ const ContactForm = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [blitzStatus, setBlitzStatus] = useState(null); // 'posted' | 'error' | null
 
   // Messenger options
   const messengerOptions = [
@@ -89,11 +90,12 @@ const ContactForm = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setBlitzStatus(null);
 
     try {
       const response = await fetch('http://barracuda.marketing/api/contact', {
@@ -108,6 +110,14 @@ const ContactForm = () => {
 
       if (response.ok && data.success) {
         setSubmitStatus('success');
+
+        // Check Blitz API status
+        if (data.blitzPosted) {
+          setBlitzStatus('posted');
+        } else if (data.blitzError) {
+          setBlitzStatus('error');
+        }
+
         // Reset form
         setFormData({
           name: '',
@@ -179,9 +189,31 @@ const ContactForm = () => {
                   <h3 className="text-2xl font-bold text-text mb-4">
                     Thank You!
                   </h3>
-                  <p className="text-text-muted mb-8 max-w-md mx-auto">
+                  <p className="text-text-muted mb-4 max-w-md mx-auto">
                     Your message has been sent successfully. Our team will review your application and get back to you within 24 hours.
                   </p>
+
+                  {/* Blitz API Status */}
+                  {blitzStatus && (
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 ${
+                      blitzStatus === 'posted'
+                        ? 'bg-accent-green/10 text-accent-green border border-accent-green/30'
+                        : 'bg-accent-red/10 text-accent-red border border-accent-red/30'
+                    }`}>
+                      {blitzStatus === 'posted' ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Lead submitted to our affiliate network
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="w-4 h-4" />
+                          Lead processing in progress
+                        </>
+                      )}
+                    </div>
+                  )}
+
                   <Button
                     variant="outline"
                     onClick={() => setSubmitStatus(null)}

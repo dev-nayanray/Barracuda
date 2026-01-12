@@ -43,7 +43,9 @@ const settings = {
     telegram: 'https://t.me/affiiate',
     skype: 'live:affiiate',
     email: 'contact@affiiate.com'
-  }
+  },
+  // Telegram username for frontend display (without @)
+  telegramUsername: 'barracuda_alex'
 };
 
 // Initialize default admin with hashed password
