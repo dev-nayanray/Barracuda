@@ -1,6 +1,5 @@
-'use client';
-
-import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Metrics from '@/components/sections/Metrics';
@@ -10,18 +9,9 @@ import Team from '@/components/sections/Team';
 import Conferences from '@/components/sections/Conferences';
 import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
-import Navbar from '@/components/layout/Navbar';
+import HomeClient from './home-client';
 
-// Client-only ContactForm (uses useSearchParams safely)
-const ContactForm = dynamic(
-  () => import('@/components/sections/ContactForm'),
-  {
-    ssr: false,
-    loading: () => <div>Loading...</div>,
-  }
-);
-
-export default function Home() {
+export default function Page() {
   return (
     <>
       <Navbar />
@@ -34,7 +24,10 @@ export default function Home() {
         <Testimonials />
         <Conferences />
         <Team />
-        <ContactForm />
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <HomeClient />
+        </Suspense>
       </main>
       <Footer />
     </>
