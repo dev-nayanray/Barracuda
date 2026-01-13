@@ -2,25 +2,15 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
 import { Send, CheckCircle2, AlertCircle, Loader2, UserPlus, Link, Copy, ExternalLink, Globe, Target, RefreshCw } from 'lucide-react';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
+import ContactFormSearchParams from './ContactFormSearchParams';
 
-// Hook to safely use search params only on client side to avoid SSR issues
-function useSafeSearchParams() {
-  const [isClient, setIsClient] = useState(false);
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  return isClient ? searchParams : null;
-}
 
 /**
  * Barracuda Affiliate Contact Form
@@ -77,17 +67,18 @@ const trafficSourceOptions = [
 ];
 
 const ContactForm = () => {
-  // Wrap useSearchParams in Suspense boundary as required by Next.js 14
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ContactFormContent />
+      <ContactFormSearchParams>
+        {(searchParams) => (
+          <ContactFormContent searchParams={searchParams} />
+        )}
+      </ContactFormSearchParams>
     </Suspense>
   );
 };
 
-const ContactFormContent = () => {
-  // Next.js search params for URL parameter capture (safely on client side only)
-  const searchParams = useSafeSearchParams();
+const ContactFormContent = ({ searchParams }) => {
 
   // Form state
   const [formData, setFormData] = useState({

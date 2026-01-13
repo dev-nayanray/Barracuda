@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -9,7 +8,7 @@ import Team from '@/components/sections/Team';
 import Conferences from '@/components/sections/Conferences';
 import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
-import HomeClient from './home-client';
+import ContactForm from '@/components/sections/ContactForm';
 
 export default function Page() {
   return (
@@ -25,9 +24,7 @@ export default function Page() {
         <Conferences />
         <Team />
 
-        <Suspense fallback={<div>Loading...</div>}>
-          <HomeClient />
-        </Suspense>
+        <ContactForm />
       </main>
       <Footer />
     </>
