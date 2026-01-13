@@ -10,9 +10,21 @@ import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
 
+// Hook to safely use search params only on client side to avoid SSR issues
+function useSafeSearchParams() {
+  const [isClient, setIsClient] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient ? searchParams : null;
+}
+
 /**
  * Barracuda Affiliate Contact Form
- * 
+ *
  * Features:
  * - Auto-captures URL parameters (affiliate_id, sub1)
  * - Submits to local API for record keeping
@@ -65,8 +77,8 @@ const trafficSourceOptions = [
 ];
 
 const ContactForm = () => {
-  // Next.js search params for URL parameter capture
-  const searchParams = useSearchParams();
+  // Next.js search params for URL parameter capture (safely on client side only)
+  const searchParams = useSafeSearchParams();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -111,6 +123,8 @@ const ContactForm = () => {
 
   // Capture URL parameters on component mount
   useEffect(() => {
+    if (!searchParams) return;
+
     const affiliateIdFromUrl = searchParams.get('affiliate_id');
     const sub1FromUrl = searchParams.get('sub1');
     const urlIdFromUrl = searchParams.get('url_id');
@@ -355,9 +369,9 @@ const ContactForm = () => {
       messenger: '',
       username: '',
       message: '',
-      affiliateId: searchParams.get('affiliate_id') || CONFIG.DEFAULT_AFFILIATE_ID,
+      affiliateId: (searchParams && searchParams.get('affiliate_id')) || CONFIG.DEFAULT_AFFILIATE_ID,
       urlId: CONFIG.URL_ID,
-      sub1: searchParams.get('sub1') || '',
+      sub1: (searchParams && searchParams.get('sub1')) || '',
       trackingSource: 'contact_form',
       campaignId: '',
     });
@@ -729,7 +743,7 @@ const ContactForm = () => {
                           <Input
                             label="Click ID (sub1)"
                             name="sub1"
-                            placeholder={searchParams.get('sub1') || 'Optional'}
+                            placeholder={(searchParams && searchParams.get('sub1')) || 'Optional'}
                             value={formData.sub1}
                             onChange={handleChange}
                             leftIcon={<Link className="w-4 h-4" />}
