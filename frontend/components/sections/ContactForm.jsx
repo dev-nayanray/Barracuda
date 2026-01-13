@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Send, CheckCircle2, AlertCircle, Loader2, UserPlus, Link, Copy, ExternalLink, Globe, Target, RefreshCw } from 'lucide-react';
@@ -79,6 +79,16 @@ const trafficSourceOptions = [
 const ContactForm = () => {
   // Next.js search params for URL parameter capture (safely on client side only)
   const searchParams = useSafeSearchParams();
+
+  // Wrap useSearchParams in Suspense boundary as required by Next.js 14
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContactFormContent searchParams={searchParams} />
+    </Suspense>
+  );
+};
+
+const ContactFormContent = ({ searchParams }) => {
   
   // Form state
   const [formData, setFormData] = useState({
