@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -31,7 +32,9 @@ export default function Home() {
         <Testimonials />
         <Conferences />
         <Team />
-        <ContactForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ContactForm />
+        </Suspense>
       </main>
       <Footer />
     </>
