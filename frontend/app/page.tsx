@@ -1,4 +1,6 @@
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
 import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -10,7 +12,10 @@ import Conferences from '@/components/sections/Conferences';
 import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
 
-const ContactForm = dynamic(() => import('@/components/sections/ContactForm'), { ssr: false });
+const ContactForm = dynamic(
+  () => import('@/components/sections/ContactForm'),
+  { ssr: false }
+);
 
 export default function Page() {
   return (
@@ -26,7 +31,10 @@ export default function Page() {
         <Conferences />
         <Team />
 
-        <ContactForm />
+        {/* ✅ REQUIRED for useSearchParams */}
+        <Suspense fallback={<div className="text-center py-10">Loading contact form…</div>}>
+          <ContactForm />
+        </Suspense>
       </main>
       <Footer />
     </>
