@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -9,7 +9,8 @@ import Team from '@/components/sections/Team';
 import Conferences from '@/components/sections/Conferences';
 import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
-import ContactForm from '@/components/sections/ContactForm';
+
+const ContactForm = dynamic(() => import('@/components/sections/ContactForm'), { ssr: false });
 
 export default function Page() {
   return (
@@ -25,9 +26,7 @@ export default function Page() {
         <Conferences />
         <Team />
 
-        <Suspense fallback={<div>Loading...</div>}>
-          <ContactForm />
-        </Suspense>
+        <ContactForm />
       </main>
       <Footer />
     </>

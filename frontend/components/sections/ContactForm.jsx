@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle2, AlertCircle, Loader2, UserPlus, Link, Copy, ExternalLink, Globe, Target, RefreshCw } from 'lucide-react';
 import Input from '@/components/ui/Input';
@@ -68,13 +68,11 @@ const trafficSourceOptions = [
 
 const ContactForm = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ContactFormSearchParams>
-        {(searchParams) => (
-          <ContactFormContent searchParams={searchParams} />
-        )}
-      </ContactFormSearchParams>
-    </Suspense>
+    <ContactFormSearchParams>
+      {(searchParams) => (
+        <ContactFormContent searchParams={searchParams} />
+      )}
+    </ContactFormSearchParams>
   );
 };
 
