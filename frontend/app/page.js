@@ -13,6 +13,9 @@ import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
 import Navbar from '@/components/layout/Navbar';
 
+// Force dynamic rendering to avoid useSearchParams prerendering issues
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <>
