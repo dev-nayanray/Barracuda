@@ -1,3 +1,5 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
