@@ -1,20 +1,20 @@
-'use client';
-
-import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Metrics from '@/components/sections/Metrics';
 import Partners from '@/components/sections/Partners';
 import Advertisers from '@/components/sections/Advertisers';
-import ContactForm from '@/components/sections/ContactForm';
 import Team from '@/components/sections/Team';
 import Conferences from '@/components/sections/Conferences';
 import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/sections/Footer';
 import Navbar from '@/components/layout/Navbar';
 
-// Force dynamic rendering to avoid useSearchParams prerendering issues
-export const dynamic = 'force-dynamic';
+// Dynamically import ContactForm to prevent SSR issues with useSearchParams
+const ContactForm = dynamic(() => import('@/components/sections/ContactForm'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
 
 export default function Home() {
   return (
@@ -29,9 +29,7 @@ export default function Home() {
         <Testimonials />
         <Conferences />
         <Team />
-        <Suspense fallback={<div>Loading...</div>}>
-          <ContactForm />
-        </Suspense>
+        <ContactForm />
       </main>
       <Footer />
     </>
