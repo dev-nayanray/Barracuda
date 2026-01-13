@@ -77,19 +77,18 @@ const trafficSourceOptions = [
 ];
 
 const ContactForm = () => {
-  // Next.js search params for URL parameter capture (safely on client side only)
-  const searchParams = useSafeSearchParams();
-
   // Wrap useSearchParams in Suspense boundary as required by Next.js 14
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ContactFormContent searchParams={searchParams} />
+      <ContactFormContent />
     </Suspense>
   );
 };
 
-const ContactFormContent = ({ searchParams }) => {
-  
+const ContactFormContent = () => {
+  // Next.js search params for URL parameter capture (safely on client side only)
+  const searchParams = useSafeSearchParams();
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',

@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"app\\\\page.tsx -> @/components/sections/ContactForm":{"id":4882,"files":["static/chunks/882.c496bbab7a7d2ca2.js"]}}';
+self.__REACT_LOADABLE_MANIFEST='{"app\\\\page.tsx -> @/components/sections/ContactForm":{"id":4882,"files":["static/chunks/882.c4454e86a91dead2.js"]}}';
