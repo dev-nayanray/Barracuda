@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
@@ -24,7 +25,9 @@ export default function Page() {
         <Conferences />
         <Team />
 
-        <ContactForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ContactForm />
+        </Suspense>
       </main>
       <Footer />
     </>
