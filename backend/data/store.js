@@ -29,6 +29,15 @@ const store = {
       telegram: '',
       skype: '',
       email: ''
+    },
+    // Affiliate settings
+    affiliate: {
+      defaultAffiliateId: '2',
+      trackingBaseUrl: 'https://hooplaseft.com/api/v3/offer/2',
+      apiKey: process.env.HOOPLASEFT_API_KEY || '',
+      autoApprove: false,
+      commissionRate: 30, // Default 30% commission
+      paymentTerms: 'weekly' // weekly, biweekly, monthly
     }
   }
 };

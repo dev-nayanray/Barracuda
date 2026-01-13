@@ -41,19 +41,93 @@ const StatusBadge = ({ status }) => {
 };
 
 /**
+ * Affiliate Status badge component
+ */
+const AffiliateStatusBadge = ({ status }) => {
+  const statusConfig = {
+    pending: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', label: 'Pending' },
+    approved: { color: 'bg-accent-green/20 text-accent-green border-accent-green/30', label: 'Approved' },
+    rejected: { color: 'bg-accent-red/20 text-accent-red border-accent-red/30', label: 'Rejected' },
+  };
+
+  const config = statusConfig[status] || statusConfig.pending;
+
+  return (
+    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}>
+      {config.label}
+    </span>
+  );
+};
+
+/**
+ * Type badge component
+ */
+const TypeBadge = ({ type }) => {
+  const typeConfig = {
+    affiliate: { color: 'bg-secondary-500/20 text-secondary-400 border-secondary-500/30', label: 'Affiliate' },
+    publisher: { color: 'bg-secondary-500/20 text-secondary-400 border-secondary-500/30', label: 'Publisher' },
+    advertiser: { color: 'bg-primary-500/20 text-primary-400 border-primary-500/30', label: 'Advertiser' },
+    influencer: { color: 'bg-accent-purple/20 text-accent-purple border-accent-purple/30', label: 'Influencer' },
+    media_buyer: { color: 'bg-accent-orange/20 text-accent-orange border-accent-orange/30', label: 'Media Buyer' },
+    agency: { color: 'bg-accent-blue/20 text-accent-blue border-accent-blue/30', label: 'Agency' },
+  };
+
+  const config = typeConfig[type] || { color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', label: type };
+
+  return (
+    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}>
+      {config.label}
+    </span>
+  );
+};
+
+/**
+ * API Status component - shows Hooplaseft status for affiliates
+ */
+const ApiStatus = ({ contact }) => {
+  return (
+    <div className="flex items-center gap-2">
+      {/* Hooplaseft Status (for affiliates) */}
+      {contact.registration_type === 'affiliate' && (
+        <>
+          {contact.affiliateRegistered ? (
+            <div className="flex items-center gap-1" title="Hooplaseft: Registered">
+              <CheckCircle className="w-4 h-4 text-accent-green" />
+            </div>
+          ) : contact.affiliateError ? (
+            <div className="flex items-center gap-1" title={`Hooplaseft: ${contact.affiliateError}`}>
+              <XCircle className="w-4 h-4 text-accent-red" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1" title="Hooplaseft: Pending">
+              <Clock className="w-4 h-4 text-text-muted" />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+/**
  * Contacts Table Component
  * Displays contacts with search, filter, and actions
+ * Supports affiliate-specific features
  */
 export default function ContactsTable({ 
   contacts = [], 
   loading = false, 
   onView, 
   onEdit, 
-  onDelete 
+  onDelete,
+  renderTypeBadge,
+  renderAffiliateStatusBadge,
+  renderApiStatus
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [filterAffiliateStatus, setFilterAffiliateStatus] = useState('');
   const [openMenu, setOpenMenu] = useState(null);
 
   // Filter contacts based on search and filters
@@ -65,14 +139,19 @@ export default function ContactsTable({
     
     const matchesType = !filterType || contact.type === filterType;
     const matchesStatus = !filterStatus || contact.status === filterStatus;
+    const matchesAffiliateStatus = !filterAffiliateStatus || contact.affiliate_status === filterAffiliateStatus;
     
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesType && matchesStatus && matchesAffiliateStatus;
   });
 
   const typeOptions = [
     { value: '', label: 'All Types' },
+    { value: 'affiliate', label: 'Affiliate' },
     { value: 'publisher', label: 'Publisher' },
     { value: 'advertiser', label: 'Advertiser' },
+    { value: 'influencer', label: 'Influencer' },
+    { value: 'media_buyer', label: 'Media Buyer' },
+    { value: 'agency', label: 'Agency' },
   ];
 
   const statusOptions = [
@@ -80,6 +159,13 @@ export default function ContactsTable({
     { value: 'new', label: 'New' },
     { value: 'contacted', label: 'Contacted' },
     { value: 'qualified', label: 'Qualified' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
+
+  const affiliateStatusOptions = [
+    { value: '', label: 'All Affiliate Status' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
     { value: 'rejected', label: 'Rejected' },
   ];
 
@@ -95,18 +181,25 @@ export default function ContactsTable({
             leftIcon={<Mail className="w-4 h-4" />}
           />
         </div>
-        <div className="w-full md:w-48">
+        <div className="w-full md:w-40">
           <Select
             options={typeOptions}
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
           />
         </div>
-        <div className="w-full md:w-48">
+        <div className="w-full md:w-40">
           <Select
             options={statusOptions}
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
+          />
+        </div>
+        <div className="w-full md:w-48">
+          <Select
+            options={affiliateStatusOptions}
+            value={filterAffiliateStatus}
+            onChange={(e) => setFilterAffiliateStatus(e.target.value)}
           />
         </div>
       </div>
@@ -126,8 +219,16 @@ export default function ContactsTable({
                 <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
                   Type
                 </th>
+                {contacts.some(c => c.registration_type === 'affiliate') && (
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    Affiliate Status
+                  </th>
+                )}
                 <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
-                  Status
+                  Contact Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  APIs
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
                   Date
@@ -140,7 +241,7 @@ export default function ContactsTable({
             <tbody className="divide-y divide-surface-300">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center">
+                  <td colSpan="9" className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center gap-3 text-text-muted">
                       <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                       Loading contacts...
@@ -149,7 +250,7 @@ export default function ContactsTable({
                 </tr>
               ) : filteredContacts.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center text-text-muted">
+                  <td colSpan="9" className="px-6 py-12 text-center text-text-muted">
                     No contacts found
                   </td>
                 </tr>
@@ -177,47 +278,35 @@ export default function ContactsTable({
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                        contact.type === 'publisher' 
-                          ? 'bg-secondary-500/20 text-secondary-400' 
-                          : 'bg-primary-500/20 text-primary-400'
-                      }`}>
-                        {contact.type === 'publisher' ? 'Publisher' : 'Advertiser'}
-                      </span>
+                      {renderTypeBadge ? (
+                        renderTypeBadge(contact.type)
+                      ) : (
+                        <TypeBadge type={contact.type} />
+                      )}
                     </td>
+                    {/* Affiliate Status Column */}
+                    {contacts.some(c => c.registration_type === 'affiliate') && (
+                      <td className="px-6 py-4">
+                        {contact.registration_type === 'affiliate' ? (
+                          renderAffiliateStatusBadge ? (
+                            renderAffiliateStatusBadge(contact.affiliate_status)
+                          ) : (
+                            <AffiliateStatusBadge status={contact.affiliate_status} />
+                          )
+                        ) : (
+                          <span className="text-text-muted text-xs">-</span>
+                        )}
+                      </td>
+                    )}
                     <td className="px-6 py-4">
                       <StatusBadge status={contact.status || 'new'} />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {contact.blitzPosted ? (
-                          <CheckCircle className="w-4 h-4 text-accent-green" />
-                        ) : contact.blitzError ? (
-                          <XCircle className="w-4 h-4 text-accent-red" />
-                        ) : (
-                          <Clock className="w-4 h-4 text-text-muted" />
-                        )}
-                        <span className={`text-xs ${
-                          contact.blitzPosted ? 'text-accent-green' :
-                          contact.blitzError ? 'text-accent-red' : 'text-text-muted'
-                        }`}>
-                          {contact.blitzPosted ? 'Posted' : contact.blitzError ? 'Error' : 'Pending'}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {contact.ftd ? (
-                          <CheckCircle className="w-4 h-4 text-accent-green" />
-                        ) : (
-                          <Clock className="w-4 h-4 text-text-muted" />
-                        )}
-                        <span className={`text-xs ${
-                          contact.ftd ? 'text-accent-green' : 'text-text-muted'
-                        }`}>
-                          {contact.ftd ? 'Yes' : 'No'}
-                        </span>
-                      </div>
+                      {renderApiStatus ? (
+                        renderApiStatus(contact)
+                      ) : (
+                        <ApiStatus contact={contact} />
+                      )}
                     </td>
                     <td className="px-6 py-4 text-text-muted text-sm">
                       {new Date(contact.createdAt).toLocaleDateString()}
@@ -286,4 +375,6 @@ export default function ContactsTable({
     </div>
   );
 }
+
+export { StatusBadge, AffiliateStatusBadge, TypeBadge, ApiStatus };
 

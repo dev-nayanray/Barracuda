@@ -7,21 +7,21 @@ import { staggerContainer, staggerItem, fadeInUp } from '@/lib/animations';
 
 const teamMembers = [
   {
-    name: 'Alexandra Chen',
+    name: 'Alexandra Aff',
     position: 'Head of Partner Relations',
     color: 'from-purple-500 to-purple-700',
     messenger: 'telegram',
-    username: '@barracuda_alex ',
-    email: 'alexandra@barracuda.com',
+    username: '@alexenok_aff',
+    email: 'alex@barracuda.marketing',
     bio: '10+ years in iGaming Barracuda management.',
   },
   {
-    name: 'Marcus Johnson',
+    name: 'Maria',
     position: 'Head of Advertisers',
     color: 'from-primary-500 to-primary-700',
     messenger: 'whatsapp',
     username: '+1234567890',
-    email: 'marcus@barracuda.com',
+    email: 'Maria@barracuda.marketing',
     bio: 'Specializes in scaling advertiser campaigns.',
   },
   {
@@ -30,7 +30,7 @@ const teamMembers = [
     color: 'from-green-500 to-green-700',
     messenger: 'telegram',
     username: '@barracuda_alex ',
-    email: 'elena@Barracuda.com',
+    email: 'alex@barracuda.marketing',
     bio: 'Bilingual support for Spanish/Portuguese.',
   },
   {
@@ -39,7 +39,7 @@ const teamMembers = [
     color: 'from-red-500 to-red-700',
     messenger: 'wechat',
     username: 'david_barracuda',
-    email: 'david@barracuda.com',
+    email: 'alex@barracuda.marketing',
     bio: 'Expert in Asian markets.',
   },
 ];
@@ -151,11 +151,11 @@ function Team() {
         React.createElement('p', { className: 'text-text-muted mb-6' }, 'Send us a general inquiry.'),
         React.createElement('div', { className: 'flex flex-col sm:flex-row items-center justify-center gap-4' },
           React.createElement('a', {
-            href: 'mailto:partners@barracuda.com',
+            href: 'mailto:alex@barracuda.marketing',
             className: 'flex items-center gap-2 text-primary-500 hover:text-primary-400 transition-colors'
           },
             React.createElement(Mail, { className: 'w-5 h-5' }),
-            React.createElement('span', null, 'partners@barracuda.com')
+            React.createElement('span', null, 'alex@barracuda.marketing')
           ),
           React.createElement('span', { className: 'hidden sm:block text-text-muted' }, '|'),
           React.createElement('a', {
@@ -165,7 +165,7 @@ function Team() {
             className: 'flex items-center gap-2 text-primary-500 hover:text-primary-400 transition-colors'
           },
             React.createElement(Send, { className: 'w-5 h-5' }),
-            React.createElement('span', null, '@barracuda_support')
+            React.createElement('span', null, '@barracuda_alex ')
           )
         )
       )

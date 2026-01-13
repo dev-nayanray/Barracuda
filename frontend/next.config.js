@@ -7,6 +7,16 @@ const nextConfig = {
     unoptimized: true,
   },
 
+  // Proxy API requests to backend
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:5000/api/:path*',
+      },
+    ];
+  },
+
   webpack: (config) => {
     config.resolve.alias['@'] = __dirname;
     return config;

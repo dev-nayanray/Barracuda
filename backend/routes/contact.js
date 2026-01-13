@@ -1,6 +1,11 @@
 /**
- * Contact Form Routes
- * Handles contact form submissions from the frontend
+ * Contact Form Routes - Barracuda/iREV Integration
+ * Handles contact form submissions with affiliate registration
+ * 
+ * Endpoints:
+ * - POST /api/contact - Submit form and register affiliate
+ * - GET /api/contact - Get all contacts (admin)
+ * - POST /api/contact/tracking-link - Generate tracking link
  */
 
 const express = require('express');
@@ -10,19 +15,42 @@ const router = express.Router();
 // Use shared data store
 const store = require('../data/store');
 
-// Blitz API Configuration
-const BLITZ_API_BASE = 'https://blsmapi.net';
-const BLITZ_AFF_ID = '148';
-const BLITZ_TOKEN = 'wuX4oS1IU7m2J48qGuFl';
+// Hooplaseft Affiliate Platform Configuration
+const HOOPLASEFT_API_BASE = 'https://hooplaseft.com/api/v3';
+const HOOPLASEFT_API_KEY = process.env.HOOPLASEFT_API_KEY || '';
+const HOOPLASEFT_DEFAULT_AFFILIATE_ID = '2';
+const HOOPLASEFT_URL_ID = '2'; // Always 2 as per requirements
 
 /**
  * @route   POST /api/contact
- * @desc    Submit contact form
+ * @desc    Submit contact form (general or affiliate registration)
  * @access  Public
+ * 
+ * Process:
+ * 1. Validate form data
+ * 2. Store contact locally for record keeping
+ * 3. Submit lead to Hooplaseft iREV Offer API (POST /api/v3/offer/2)
+ * 4. Return tracking link and status
  */
 router.post('/', async (req, res) => {
   try {
-    const { name, email, company, type, messenger, message, username } = req.body;
+    const formData = req.body;
+    const {
+      name,
+      email,
+      company,
+      type,
+      messenger,
+      username,
+      message,
+      // URL parameters captured
+      affiliate_id,
+      url_id,
+      sub1,
+      // Tracking fields
+      trackingSource,
+      campaignId
+    } = formData;
 
     // Validation
     if (!name || !email || !company || !type) {
@@ -41,104 +69,165 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Create contact record
+    // Determine registration type
+    const registrationType = type === 'affiliate' || type === 'publisher' ? 'affiliate' : 
+                             type === 'advertiser' ? 'advertiser' : 'other';
+
+    // Use URL parameters or defaults
+    const effectiveAffiliateId = affiliate_id || HOOPLASEFT_DEFAULT_AFFILIATE_ID;
+    const effectiveUrlId = url_id || HOOPLASEFT_URL_ID;
+    
+    // Generate tracking link for affiliate registrations
+    let trackingLink = null;
+    if (registrationType === 'affiliate') {
+      const trackingParams = new URLSearchParams({
+        affiliate_id: effectiveAffiliateId,
+        url_id: effectiveUrlId,
+        source: trackingSource || 'contact_form'
+      });
+      
+      // Add optional sub1 (click ID) if present
+      if (sub1) {
+        trackingParams.append('sub1', sub1);
+      }
+      
+      // Add optional user info for pre-fill
+      if (name) trackingParams.append('name', encodeURIComponent(name));
+      if (email) trackingParams.append('email', encodeURIComponent(email));
+      if (company) trackingParams.append('company', encodeURIComponent(company));
+      
+      trackingLink = `${HOOPLASEFT_API_BASE}/offer/${effectiveUrlId}?${trackingParams.toString()}`;
+    }
+
+    // Create contact record with all fields
     const contact = {
       id: store.contacts.length + 1,
       name: name.trim(),
       email: email.toLowerCase().trim(),
       company: company.trim(),
-      type, // 'publisher' or 'advertiser'
+      type, // 'affiliate', 'publisher', 'advertiser', 'influencer', 'media_buyer', 'agency'
       messenger: messenger || null,
       username: username || null,
       message: message?.trim() || null,
       status: 'new',
+      
+      // Affiliate-specific fields
+      affiliate_id: effectiveAffiliateId,
+      url_id: effectiveUrlId,
+      sub1: sub1 || null,
+      traffic_source: trackingSource || null,
+      campaign_id: campaignId || null,
+      registration_type: registrationType,
+      affiliate_status: registrationType === 'affiliate' ? 'pending' : null,
+      tracking_link: trackingLink,
+      registration_date: new Date().toISOString(),
+      
       createdAt: new Date().toISOString()
     };
 
     // Store contact in shared store
     store.contacts.push(contact);
 
-    // Log contact (in production, send email notification)
-    console.log('📬 New Contact Submission:', contact);
+    // Log contact
+    console.log('📬 New Contact Submission:', {
+      id: contact.id,
+      type: registrationType,
+      email: contact.email,
+      affiliate_id: effectiveAffiliateId,
+      sub1: sub1 || 'not set'
+    });
 
-    let blitzPosted = false;
-    let blitzError = null;
+    // Process Hooplaseft Affiliate Registration
+    // POST https://hooplaseft.com/api/v3/offer/2
+    let affiliatePosted = false;
+    let affiliateError = null;
 
-    try {
-      // Step 1: Verify email with Blitz API
-      console.log('🔍 Verifying email with Blitz API...');
-      const emailVerificationData = new URLSearchParams({
-        email: email.toLowerCase().trim(),
-        first_name: name.split(' ')[0] || name.trim(),
-        last_name: name.split(' ').slice(1).join(' ') || 'Unknown',
-        funnel: 'testfunnel'
-      });
+    if (registrationType === 'affiliate') {
+      try {
+        console.log('🚀 Registering affiliate in hooplaseft platform...');
+        
+        // Build the offer submission payload
+        const affiliateData = {
+          // Required fields per specification
+          affiliate_id: effectiveAffiliateId,
+          url_id: effectiveUrlId, // Always 2
+          name: name.trim(),
+          email: email.toLowerCase().trim(),
+          company: company.trim(),
+          messenger: messenger || '',
+          username: username || '',
+          message: message?.trim() || '',
+          
+          // Optional tracking fields
+          sub1: sub1 || '', // Click ID
+          source: trackingSource || 'contact_form',
+          campaign_id: campaignId || '',
+          
+          // Metadata
+          registration_date: new Date().toISOString(),
+          status: 'pending',
+          source_url: req.headers.referer || 'contact_form',
+          ip_address: req.ip || req.connection.remoteAddress || '127.0.0.1'
+        };
 
-      const emailResponse = await axios.post(`${BLITZ_API_BASE}/emails`, emailVerificationData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+        // Call hooplaseft offer API endpoint
+        const affiliateResponse = await axios.post(
+          `${HOOPLASEFT_API_BASE}/offer/${effectiveUrlId}`,
+          affiliateData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': HOOPLASEFT_API_KEY ? `Bearer ${HOOPLASEFT_API_KEY}` : ''
+            },
+            timeout: 15000 // 15 second timeout
+          }
+        );
+
+        console.log('✅ Affiliate registered successfully:', affiliateResponse.data);
+        affiliatePosted = true;
+        contact.affiliateRegistered = true;
+        contact.affiliateResponse = affiliateResponse.data;
+
+      } catch (affiliateApiError) {
+        console.error('❌ Hooplaseft API Error:', affiliateApiError.response?.data || affiliateApiError.message);
+        
+        // Don't fail the whole request if affiliate registration fails
+        // The contact is still stored locally
+        if (affiliateApiError.response) {
+          affiliateError = affiliateApiError.response.data?.message || 
+                          affiliateApiError.response.statusText || 
+                          'API request failed';
+        } else if (affiliateApiError.request) {
+          affiliateError = 'No response from Hooplaseft API';
+        } else {
+          affiliateError = affiliateApiError.message;
         }
-      });
-
-      console.log('✅ Email verification successful:', emailResponse.data);
-
-      // Step 2: Post lead to Blitz API
-      console.log('🚀 Posting lead to Blitz API...');
-
-      // Split name into first and last
-      const nameParts = name.trim().split(' ');
-      const firstName = nameParts[0] || 'Unknown';
-      const lastName = nameParts.slice(1).join(' ') || 'Unknown';
-
-      const leadData = new URLSearchParams({
-        first_name: firstName,
-        last_name: lastName,
-        password: generateRandomPassword(),
-        email: email.toLowerCase().trim(),
-        funnel: 'testfunnel',
-        source: 'https://yourwebsite.com', // Replace with actual source URL
-        aff_sub: 'contact_form',
-        aff_sub2: company.trim(),
-        affid: BLITZ_AFF_ID,
-        area_code: '+1', // Default area code, can be made dynamic
-        phone: '1234567890', // Placeholder phone, can be made optional
-        _ip: req.ip || req.connection.remoteAddress || '127.0.0.1',
-        hitid: `contact_${contact.id}`
-      });
-
-      const leadResponse = await axios.post(`${BLITZ_API_BASE}/leads`, leadData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
-
-      console.log('✅ Lead posted successfully:', leadResponse.data);
-      blitzPosted = true;
-
-      // Update contact with Blitz lead info
-      contact.blitzLeadId = leadResponse.data?.lead_id || null;
-      contact.blitzPosted = true;
-
-      // Step 3: Check for FTD (optional, can be scheduled later)
-      // await checkFTD(email.toLowerCase().trim());
-
-    } catch (blitzApiError) {
-      console.error('❌ Blitz API Error:', blitzApiError.response?.data || blitzApiError.message);
-      blitzError = blitzApiError.response?.data?.message || blitzApiError.message;
-
-      // Update contact with error info
-      contact.blitzError = blitzError;
-      contact.blitzPosted = false;
+        
+        contact.affiliateError = affiliateError;
+        contact.affiliateRegistered = false;
+      }
     }
 
+    // Send success response
     res.status(201).json({
       success: true,
-      message: 'Thank you for your interest! Our team will contact you within 24 hours.',
+      message: registrationType === 'affiliate' 
+        ? 'Your affiliate application has been submitted successfully! Our team will contact you within 24 hours.'
+        : 'Thank you for your interest! Our team will contact you within 24 hours.',
       data: {
         contactId: contact.id,
         submittedAt: contact.createdAt,
-        blitzPosted,
-        blitzError
+        registrationType,
+        affiliatePosted: registrationType === 'affiliate' ? affiliatePosted : null,
+        affiliateError: registrationType === 'affiliate' ? affiliateError : null,
+        trackingLink: trackingLink,
+        // Tracking parameters for dashboard
+        tracking: {
+          affiliate_id: effectiveAffiliateId,
+          url_id: effectiveUrlId,
+          sub1: sub1 || null,
+          source: trackingSource || 'contact_form'
+        }
       }
     });
   } catch (error) {
@@ -185,63 +274,101 @@ router.get('/:id', (req, res) => {
 });
 
 /**
- * Generate a random password meeting Blitz requirements
- * @returns {string} Random password (6-12 chars, 1 uppercase, 1 lowercase, 1 numeric)
+ * @route   POST /api/contact/tracking-link
+ * @desc    Generate tracking link for affiliate
+ * @access  Public
  */
-function generateRandomPassword() {
-  const length = Math.floor(Math.random() * 7) + 6; // 6-12 characters
-  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-  const numbers = '0123456789';
-
-  let password = '';
-  password += uppercase[Math.floor(Math.random() * uppercase.length)];
-  password += lowercase[Math.floor(Math.random() * lowercase.length)];
-  password += numbers[Math.floor(Math.random() * numbers.length)];
-
-  const allChars = uppercase + lowercase + numbers;
-  for (let i = 3; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
-  }
-
-  // Shuffle the password
-  return password.split('').sort(() => Math.random() - 0.5).join('');
-}
-
-/**
- * Check FTD (First Time Deposit) for a lead
- * @param {string} email - Lead email to check
- */
-async function checkFTD(email) {
+router.post('/tracking-link', (req, res) => {
   try {
-    const ftdParams = new URLSearchParams({
-      token: BLITZ_TOKEN,
-      from: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Last 24 hours
-      to: new Date().toISOString().split('T')[0],
-      filter: 'ftd',
-      limit: '200'
+    const { affiliateId, urlId, sub1, source, name, email, company } = req.body;
+    
+    const effectiveAffiliateId = affiliateId || HOOPLASEFT_DEFAULT_AFFILIATE_ID;
+    const effectiveUrlId = urlId || HOOPLASEFT_URL_ID;
+    
+    const trackingParams = new URLSearchParams({
+      affiliate_id: effectiveAffiliateId,
+      url_id: effectiveUrlId,
+      source: source || 'contact_form'
     });
 
-    const ftdResponse = await axios.get(`${BLITZ_API_BASE}/affiliate_deposits/?${ftdParams}`);
+    // Add optional sub1 (click ID)
+    if (sub1) {
+      trackingParams.append('sub1', sub1);
+    }
 
-    if (ftdResponse.data && Array.isArray(ftdResponse.data)) {
-      const ftdFound = ftdResponse.data.some(deposit => deposit.email === email);
-      if (ftdFound) {
-        console.log('🎉 FTD detected for email:', email);
+    // Add optional parameters if provided
+    if (name) trackingParams.append('name', encodeURIComponent(name));
+    if (email) trackingParams.append('email', encodeURIComponent(email));
+    if (company) trackingParams.append('company', encodeURIComponent(company));
 
-        // Update contact record with FTD status
-        const contact = store.contacts.find(c => c.email === email);
-        if (contact) {
-          contact.ftd = true;
-          contact.ftdDate = new Date().toISOString();
-          console.log('Updated contact with FTD status:', contact.id);
-        }
+    const trackingLink = `${HOOPLASEFT_API_BASE}/offer/${effectiveUrlId}?${trackingParams.toString()}`;
+
+    res.json({
+      success: true,
+      data: {
+        trackingLink,
+        affiliateId: effectiveAffiliateId,
+        urlId: effectiveUrlId,
+        sub1: sub1 || null,
+        source: source || 'contact_form'
       }
+    });
+  } catch (error) {
+    console.error('Tracking link generation error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate tracking link'
+    });
+  }
+});
+
+/**
+ * @route   POST /api/contact/verify
+ * @desc    Verify if email exists in system
+ * @access  Public
+ */
+router.post('/verify', (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Search contacts for this email
+    const existingContact = store.contacts.find(
+      c => c.email === email.toLowerCase().trim()
+    );
+
+    if (existingContact) {
+      res.json({
+        success: true,
+        data: {
+          exists: true,
+          contact: existingContact,
+          affiliateStatus: existingContact.affiliate_status,
+          registrationDate: existingContact.registration_date
+        }
+      });
+    } else {
+      res.json({
+        success: true,
+        data: {
+          exists: false
+        }
+      });
     }
   } catch (error) {
-    console.error('FTD Check failed:', error.response?.data || error.message);
+    console.error('Verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify email'
+    });
   }
-}
+});
 
 module.exports = router;
 
