@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { 
   TrendingUp, 
   Shield, 
@@ -12,7 +12,18 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { staggerContainer, staggerItem, fadeInUp } from '@/lib/animations';
+import { staggerContainer, staggerItem } from '@/lib/animations';
+
+
+// Define animation variants locally since it's not exported from animations file
+const fadeInUpVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  }
+};
 
 /**
  * About Section Component
@@ -59,6 +70,39 @@ const About = () => {
     { value: '99.9%', label: 'Uptime' },
   ];
 
+  // Container style
+  const containerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    maxWidth: '48rem',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginBottom: '4rem',
+  };
+
+  // Stats grid style
+  const statsGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: '1rem',
+    marginBottom: '4rem',
+  };
+
+  // Advantages grid style
+  const advantagesGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+    gap: '1.5rem',
+    marginBottom: '4rem',
+  };
+
+  // CTA card style
+  const ctaCardStyle: React.CSSProperties = {
+    padding: '2rem',
+    textAlign: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
   return (
     <section id="about" className="section relative overflow-hidden">
       {/* Background Effects */}
@@ -70,8 +114,8 @@ const About = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="text-center max-w-3xl mx-auto mb-16"
+          variants={fadeInUpVariants}
+          style={containerStyle}
         >
           <h2 className="section-title mb-4">
             About Barracuda
@@ -87,13 +131,19 @@ const About = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+          style={statsGridStyle}
         >
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <motion.div
               key={stat.label}
               variants={staggerItem}
-              className="card-glow p-8 text-center"
+              transition={{ duration: 0.5, ease: [0, 0, 0.58, 1] }}
+              style={{
+                padding: '2rem',
+                textAlign: 'center',
+                background: 'var(--card-glow)',
+                borderRadius: 'var(--radius-xl)',
+              }}
             >
               <p className="text-3xl md:text-4xl font-bold gradient-text mb-2">{stat.value}</p>
               <p className="text-text-muted">{stat.label}</p>
@@ -107,13 +157,19 @@ const About = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
+          style={advantagesGridStyle}
         >
-          {advantages.map((advantage, index) => (
+          {advantages.map((advantage) => (
             <motion.div
               key={advantage.title}
               variants={staggerItem}
-              className="card p-8 hover:border-primary-500/30 group"
+              transition={{ duration: 0.5, ease: [0, 0, 0.58, 1] }}
+              style={{
+                padding: '2rem',
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--surface-300)',
+              }}
             >
               <div className="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-500/20 transition-colors">
                 <advantage.icon className="w-7 h-7 text-primary-500" />
@@ -129,8 +185,8 @@ const About = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="card p-8 md:p-12 text-center relative overflow-hidden"
+          variants={fadeInUpVariants}
+          style={ctaCardStyle}
         >
           {/* Background Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-r from-primary-500/10 via-secondary-500/10 to-primary-500/10" />
@@ -158,4 +214,3 @@ const About = () => {
 };
 
 export default About;
-

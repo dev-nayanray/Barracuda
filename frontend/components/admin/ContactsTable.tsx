@@ -241,7 +241,7 @@ export default function ContactsTable({
             <tbody className="divide-y divide-surface-300">
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center gap-3 text-text-muted">
                       <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                       Loading contacts...
@@ -250,7 +250,7 @@ export default function ContactsTable({
                 </tr>
               ) : filteredContacts.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-6 py-12 text-center text-text-muted">
+                  <td colSpan={9} className="px-6 py-12 text-center text-text-muted">
                     No contacts found
                   </td>
                 </tr>

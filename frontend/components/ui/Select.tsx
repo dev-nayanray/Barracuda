@@ -1,14 +1,42 @@
 'use client';
 
-import { forwardRef } from 'react';
+import React, { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
+
+/**
+ * Select Option type
+ */
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * Select Component Props
+ */
+export interface SelectProps {
+  label?: string;
+  placeholder?: string;
+  options?: SelectOption[];
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void;
+  name?: string;
+  id?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  className?: string;
+  leftIcon?: ReactNode;
+  helpText?: string;
+}
 
 /**
  * Select Component
  * A customizable select dropdown with validation states
  */
-const Select = forwardRef(({
+const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   label,
   placeholder = 'Select an option',
   options = [],
@@ -21,6 +49,8 @@ const Select = forwardRef(({
   disabled = false,
   required = false,
   className = '',
+  leftIcon,
+  helpText,
   ...props
 }, ref) => {
   // Generate ID if not provided
@@ -41,6 +71,13 @@ const Select = forwardRef(({
       
       {/* Select Container */}
       <div className="relative">
+        {/* Left Icon */}
+        {leftIcon && (
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
+            {leftIcon}
+          </div>
+        )}
+
         <select
           ref={ref}
           id={selectId}
@@ -62,6 +99,8 @@ const Select = forwardRef(({
               : 'border-surface-300 focus:border-primary-500',
             // Disabled state
             disabled && 'opacity-50 cursor-not-allowed',
+            // Icon padding
+            leftIcon && 'pl-11',
             // Transition
             'transition-all duration-200',
             className
@@ -92,6 +131,11 @@ const Select = forwardRef(({
       {/* Error Message */}
       {error && (
         <p className="mt-1 text-sm text-accent-red">{error}</p>
+      )}
+
+      {/* Help Text */}
+      {helpText && (
+        <p className="mt-1 text-sm text-text-muted">{helpText}</p>
       )}
     </div>
   );

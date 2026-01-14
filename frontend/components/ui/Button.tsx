@@ -1,4 +1,8 @@
-import { clsx } from 'clsx';
+import { clsx, type ClassValue } from 'clsx';
+
+function cn(...inputs: ClassValue[]) {
+  return clsx(inputs);
+}
 
 const variants = {
   primary: 'bg-primary-500 text-background hover:bg-primary-400 hover:shadow-gold',
@@ -13,6 +17,14 @@ const sizes = {
   lg: 'px-8 py-4 text-lg',
 };
 
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  loading?: boolean;
+}
+
 export default function Button({
   children,
   variant = 'primary',
@@ -22,24 +34,32 @@ export default function Button({
   className,
   onClick,
   type = 'button',
+  loading = false,
+  disabled,
   ...props
-}) {
+}: ButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={clsx(
+      disabled={disabled || loading}
+      className={cn(
         'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 ease-out',
         'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-background',
         'hover:-translate-y-0.5 hover:shadow-lg',
         'active:translate-y-0 active:shadow-none',
         variants[variant],
         sizes[size],
-        className
+        className,
+        (disabled || loading) && 'opacity-50 cursor-not-allowed'
       )}
       {...props}
     >
-      {leftIcon && <span className="mr-2">{leftIcon}</span>}
+      {loading ? (
+        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+      ) : leftIcon ? (
+        <span className="mr-2">{leftIcon}</span>
+      ) : null}
       {children}
       {rightIcon && <span className="ml-2">{rightIcon}</span>}
     </button>

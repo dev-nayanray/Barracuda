@@ -1,6 +1,19 @@
 'use client';
 
-import { LucideIcon } from 'lucide-react';
+import React from 'react';
+
+/**
+ * Stats Card Component Props
+ */
+interface StatsCardProps {
+  title: string;
+  value: any;
+  icon: any;
+  trend?: string;
+  trendValue?: string;
+  color?: 'primary' | 'green' | 'red' | 'purple';
+  onClick?: () => void;
+}
 
 /**
  * Stats Card Component
@@ -14,7 +27,7 @@ export default function StatsCard({
   trendValue,
   color = 'primary',
   onClick
-}) {
+}: StatsCardProps) {
   const colorClasses = {
     primary: 'bg-primary-500/10 text-primary-500',
     green: 'bg-accent-green/10 text-accent-green',

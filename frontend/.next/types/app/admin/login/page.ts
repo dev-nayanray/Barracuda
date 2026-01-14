@@ -1,4 +1,4 @@
-// File: C:\Users\USER\Desktop\Barracuda\frontend\app\admin\login\page.jsx
+// File: C:\Users\USER\Desktop\Barracuda\frontend\app\admin\login\page.tsx
 import * as entry from '../../../../../app/admin/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

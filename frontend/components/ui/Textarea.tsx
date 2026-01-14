@@ -4,10 +4,30 @@ import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
+ * Textarea Component Props
+ */
+interface TextareaProps {
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  name?: string;
+  id?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  rows?: number;
+  maxLength?: number;
+  className?: string;
+  helpText?: string;
+}
+
+/**
  * Textarea Component
  * A customizable textarea with validation states
  */
-const Textarea = forwardRef(({
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   label,
   placeholder,
   value,
@@ -21,6 +41,7 @@ const Textarea = forwardRef(({
   rows = 4,
   maxLength,
   className = '',
+  helpText,
   ...props
 }, ref) => {
   // Generate ID if not provided

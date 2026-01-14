@@ -59,11 +59,17 @@ export async function POST(request: NextRequest) {
 
     // Return success/error response
     if (ftdPosted) {
+      // Build redirect URL for affiliate to access the offer/dashboard
+      const redirectUrl = `https://hooplaseft.com/api/v3/offer/2?affiliate_id=${affiliate_id}&url_id=${url_id || '2'}`;
+
       return NextResponse.json({
         success: true,
         message: 'FTD postback sent successfully to Hooplaseft',
+        redirectUrl, // Include redirect URL for frontend to redirect affiliate
         data: {
-          ftdPosted: true
+          ftdPosted: true,
+          affiliateId: affiliate_id,
+          commission: deposit_amount * 0.3 // 30% commission estimate
         }
       });
     } else {
@@ -84,3 +90,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

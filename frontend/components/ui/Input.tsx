@@ -1,13 +1,34 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+
+/**
+ * Input Component Props
+ */
+interface InputProps {
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  name?: string;
+  id?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  className?: string;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  helpText?: string;
+}
 
 /**
  * Input Component
  * A customizable input field with validation states
  */
-const Input = forwardRef(({
+const Input = forwardRef<HTMLInputElement, InputProps>(({
   label,
   type = 'text',
   placeholder,
@@ -94,6 +115,11 @@ const Input = forwardRef(({
       {/* Error Message */}
       {error && (
         <p className="mt-1 text-sm text-accent-red">{error}</p>
+      )}
+
+      {/* Help Text */}
+      {props.helpText && !error && (
+        <p className="mt-1 text-sm text-text-muted">{props.helpText}</p>
       )}
     </div>
   );

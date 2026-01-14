@@ -1,8 +1,18 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Calendar, MapPin, ExternalLink, Users, Sparkles } from 'lucide-react';
-import { staggerContainer, staggerItem, fadeInUp } from '@/lib/animations';
+import { staggerContainer, staggerItem } from '@/lib/animations';
+
+// Define fadeInUp variants locally
+const fadeInUpVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  }
+};
 
 /**
  * Conferences Section Component
@@ -54,6 +64,28 @@ const Conferences = () => {
     { name: 'Affilliate World Dubai', location: 'Dubai, UAE', date: 'March 2024' },
   ];
 
+  // Styles
+  const headerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    marginBottom: '4rem',
+  };
+
+  const conferencesGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+    gap: '1.5rem',
+    marginBottom: '4rem',
+  };
+
+  const pastConferencesCardStyle: React.CSSProperties = {
+    padding: '2rem',
+  };
+
+  const ctaStyle: React.CSSProperties = {
+    marginTop: '3rem',
+    textAlign: 'center',
+  };
+
   return (
     <section id="conferences" className="section relative overflow-hidden">
       {/* Background Effects */}
@@ -67,8 +99,8 @@ const Conferences = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="text-center mb-16"
+          variants={fadeInUpVariants}
+          style={headerStyle}
         >
           <div className="badge-primary mb-4">Global Presence</div>
           <h2 className="section-title mb-4">
@@ -85,13 +117,18 @@ const Conferences = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="grid md:grid-cols-2 gap-6 mb-16"
+          style={conferencesGridStyle}
         >
           {conferences.map((conference, index) => (
             <motion.div
               key={conference.name}
               variants={staggerItem}
-              className="card overflow-hidden hover:border-primary-500/30 group"
+              style={{
+                overflow: 'hidden',
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--surface-300)',
+              }}
             >
               {/* Conference Banner Placeholder */}
               <div className={`h-32 bg-gradient-to-br ${index % 2 === 0 ? 'from-primary-500/20 to-secondary-500/20' : 'from-secondary-500/20 to-primary-500/20'} relative`}>
@@ -154,8 +191,8 @@ const Conferences = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="card p-8"
+          variants={fadeInUpVariants}
+          style={pastConferencesCardStyle}
         >
           <h3 className="text-xl font-bold text-text mb-6 text-center">
             We\'ve Also Been Here
@@ -180,8 +217,8 @@ const Conferences = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="mt-12 text-center"
+          variants={fadeInUpVariants}
+          style={ctaStyle}
         >
           <p className="text-text-muted mb-4">
             Want to meet us at a conference not listed here?

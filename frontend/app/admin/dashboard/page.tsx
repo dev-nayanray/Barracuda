@@ -132,13 +132,14 @@ export default function DashboardPage() {
           <div className="space-y-4">
             {stats?.byStatus && Object.entries(stats.byStatus).map(([status, count]) => {
               const total = stats.total || 1;
-              const percentage = ((count / total) * 100).toFixed(1);
+              const countNum = Number(count);
+              const percentage = ((countNum / total) * 100).toFixed(1);
               
               return (
                 <div key={status}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-text capitalize">{status}</span>
-                    <span className="text-sm text-text-muted">{count} ({percentage}%)</span>
+                    <span className="text-sm text-text-muted">{countNum} ({percentage}%)</span>
                   </div>
                   <div className="h-2 bg-surface-200 rounded-full overflow-hidden">
                     <div 

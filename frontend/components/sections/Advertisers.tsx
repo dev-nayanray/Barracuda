@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { 
   Target, 
   BarChart3, 
@@ -12,7 +12,17 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { staggerContainer, staggerItem, fadeInUp } from '@/lib/animations';
+import { staggerContainer, staggerItem } from '@/lib/animations';
+
+// Define fadeInUp variants locally
+const fadeInUpVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  }
+};
 
 /**
  * Advertisers Section Component
@@ -59,6 +69,33 @@ const Advertisers = () => {
     { value: '<24h', label: 'Approval Time' },
   ];
 
+  // Styles
+  const headerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    marginBottom: '4rem',
+  };
+
+  const statsGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: '1rem',
+    marginBottom: '4rem',
+  };
+
+  const benefitsGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+    gap: '1.5rem',
+    marginBottom: '4rem',
+  };
+
+  const ctaCardStyle: React.CSSProperties = {
+    padding: '2rem',
+    textAlign: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
   return (
     <section id="advertisers" className="section relative overflow-hidden">
       {/* Background Effects */}
@@ -72,8 +109,8 @@ const Advertisers = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="text-center mb-16"
+          variants={fadeInUpVariants}
+          style={headerStyle}
         >
           <div className="badge-secondary mb-4">For Advertisers</div>
           <h2 className="section-title mb-4">
@@ -90,13 +127,19 @@ const Advertisers = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
+          style={statsGridStyle}
         >
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <motion.div
               key={stat.label}
               variants={staggerItem}
-              className="card p-6 text-center"
+              style={{
+                padding: '1.5rem',
+                textAlign: 'center',
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--surface-300)',
+              }}
             >
               <p className="text-3xl md:text-4xl font-bold gradient-text mb-2">{stat.value}</p>
               <p className="text-text-muted text-sm">{stat.label}</p>
@@ -110,13 +153,18 @@ const Advertisers = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
+          style={benefitsGridStyle}
         >
-          {benefits.map((benefit, index) => (
+          {benefits.map((benefit) => (
             <motion.div
               key={benefit.title}
               variants={staggerItem}
-              className="card p-8 hover:border-secondary-500/30 group"
+              style={{
+                padding: '2rem',
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--surface-300)',
+              }}
             >
               <div className="w-14 h-14 bg-secondary-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-secondary-500/20 transition-colors">
                 <benefit.icon className="w-7 h-7 text-secondary-500" />
@@ -132,8 +180,8 @@ const Advertisers = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={fadeInUp}
-          className="card p-8 md:p-12 text-center relative overflow-hidden"
+          variants={fadeInUpVariants}
+          style={ctaCardStyle}
         >
           {/* Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-secondary-500/10 via-transparent to-primary-500/10" />

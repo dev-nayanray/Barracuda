@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Remove appDir if it was set - it's enabled by default in Next.js 14
+  },
 
   images: {
     domains: ['localhost'],
@@ -18,7 +23,7 @@ const nextConfig = {
   },
 
   webpack: (config) => {
-    config.resolve.alias['@'] = __dirname;
+    config.resolve.alias['@'] = path.resolve(__dirname);
     return config;
   },
 };
