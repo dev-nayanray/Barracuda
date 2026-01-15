@@ -74,13 +74,13 @@ import ContactFormSearchParams from './ContactFormSearchParams';
     campaignId: string;
   }
 
-  // Configuration - These should be in environment variables in production
-  const CONFIG = {
-    DEFAULT_AFFILIATE_ID: '2',
-    URL_ID: '2', // Always 2 as per requirements
-    HOOPLASEFT_API_URL: 'https://hooplaseft.com/api/v3/offer/2',
-    API_ENDPOINT: '/api/register'
-  };
+ const CONFIG = {
+  DEFAULT_AFFILIATE_ID: '2',
+  URL_ID: '2',
+  HOOPLASEFT_API_URL: 'https://hooplaseft.com/api/v3/offer/2',
+  API_ENDPOINT: `${process.env.NEXT_PUBLIC_API_URL}/api/contact`,
+};
+
 
   // Messenger options
   const messengerOptions = [
