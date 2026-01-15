@@ -285,9 +285,6 @@ import ContactFormSearchParams from './ContactFormSearchParams';
 
       try {
         // Submit contact form to local API for record keeping
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
         const response = await fetch(CONFIG.API_ENDPOINT, {
           method: 'POST',
           headers: {
@@ -305,12 +302,16 @@ import ContactFormSearchParams from './ContactFormSearchParams';
             trackingSource: formData.trackingSource,
             campaignId: formData.campaignId,
           }),
-          signal: controller.signal,
         });
 
-        clearTimeout(timeoutId);
-
-        const data = await response.json();
+        // Parse response
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          data = { success: true, message: 'Form submitted successfully' };
+        }
 
         if (response.ok && data.success) {
           setSubmitStatus('success');
@@ -340,8 +341,8 @@ import ContactFormSearchParams from './ContactFormSearchParams';
           }
         } else {
           setSubmitStatus('error');
-          setApiMessage(data.message || 'Something went wrong. Please try again.');
-          setErrors({ submit: data.message || 'Something went wrong. Please try again.' });
+          setApiMessage(data?.message || 'Something went wrong. Please try again.');
+          setErrors({ submit: data?.message || 'Something went wrong. Please try again.' });
         }
       } catch (error) {
         console.error('Form submission error:', error);
