@@ -74,13 +74,13 @@ import ContactFormSearchParams from './ContactFormSearchParams';
     campaignId: string;
   }
 
- const CONFIG = {
-  DEFAULT_AFFILIATE_ID: '2',
-  URL_ID: '2',
-  HOOPLASEFT_API_URL: 'https://hooplaseft.com/api/v3/offer/2',
-  API_ENDPOINT: `${process.env.NEXT_PUBLIC_API_URL}/api/contact`,
-};
-
+  // Configuration - These should be in environment variables in production
+  const CONFIG = {
+    DEFAULT_AFFILIATE_ID: '2',
+    URL_ID: '2', // Always 2 as per requirements
+    HOOPLASEFT_API_URL: 'https://hooplaseft.com/api/v3/offer/2',
+    API_ENDPOINT: '/api/register'
+  };
 
   // Messenger options
   const messengerOptions = [
@@ -285,6 +285,9 @@ import ContactFormSearchParams from './ContactFormSearchParams';
 
       try {
         // Submit contact form to local API for record keeping
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
         const response = await fetch(CONFIG.API_ENDPOINT, {
           method: 'POST',
           headers: {
@@ -302,7 +305,10 @@ import ContactFormSearchParams from './ContactFormSearchParams';
             trackingSource: formData.trackingSource,
             campaignId: formData.campaignId,
           }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         const data = await response.json();
 
@@ -340,8 +346,15 @@ import ContactFormSearchParams from './ContactFormSearchParams';
       } catch (error) {
         console.error('Form submission error:', error);
         setSubmitStatus('error');
-        setApiMessage('Unable to connect to server. Please try again later.');
-        setErrors({ submit: 'Unable to connect to server. Please try again later.' });
+        
+        // Provide more specific error message
+        if (error.name === 'AbortError') {
+          setApiMessage('Request timed out. Please try again.');
+          setErrors({ submit: 'Request timed out. Please try again.' });
+        } else {
+          setApiMessage('Unable to connect to server. Please try again later.');
+          setErrors({ submit: 'Unable to connect to server. Please try again later.' });
+        }
       } finally {
         setIsSubmitting(false);
       }
